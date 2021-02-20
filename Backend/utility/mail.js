@@ -69,6 +69,27 @@ exports.sendCodeForgotPassword = async(req, res, next) => {
     });
 }
 
+exports.sendPassword = async(req, res, next) => {
+    //const htmlToSend =  render(`${__dirname}/../public/teamplate/email.html`,replacements);
+    console.log('SendEmail');
+    //console.log(req);
+    let mainOptions = { // thiết lập đối tượng, nội dung gửi mail
+        from: 'Best Seller VN',
+        to: req.email,
+        subject: 'New Password',
+        text: 'New Password: ' + req.password + '\n'
+    }
+    console.log(mainOptions);
+    // res.status(200).send(req);
+    transporter.sendMail(mainOptions, function(error, info) {
+        if (error) { // nếu có lỗi
+            console.log('Error Occurs');
+        } else { //nếu thành công
+            console.log('Email sent: ' + info.response);
+        }
+    });
+}
+
 exports.send = async(req, res, next) => {
     const resetURL = `${req.protocol}://${req.get(
         'host'

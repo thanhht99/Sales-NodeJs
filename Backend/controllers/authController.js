@@ -5,10 +5,12 @@ const ErrorResponse = require("../model/ErrorResponse");
 const SuccessResponse = require("../model/SuccessResponse");
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const crypto = require("crypto");
 
 const {
     sendEmail,
-    sendCodeForgotPassword
+    sendCodeForgotPassword,
+    sendPassword
 } = require('../utility/mail');
 
 // Register
@@ -122,14 +124,18 @@ exports.forgotPasswordVerify = asyncMiddleware(async(req, res, next) => {
     const isExistEmail = await User.findOne({ email });
     if (isExistEmail) {
         if (isExistEmail.verifyCode === verifyCode) {
-            if (!isExistEmail.isActive) {
-                const updatedActive = await User.findOneAndUpdate({ email }, { isActive: true }, { new: true });
-                if (!updatedActive) {
-                    return next(new ErrorResponse(403, "Failure Authentication"))
+            if (isExistEmail.isActive) {
+                const passwordRandom = crypto.randomBytes(5).toString('hex');
+                isExistEmail.password = passwordRandom;
+                console.log(isExistEmail);
+                await sendPassword(isExistEmail, res, next);
+                const updatedPassword = await isExistEmail.save();
+                if (!updatedPassword) {
+                    return next(new ErrorResponse(400, 'Updated Password Failure'))
                 }
-                res.status(200).json(new SuccessResponse(200, updatedActive))
+                res.status(200).json(new SuccessResponse(200, updatedPassword));
             }
-            return next(new ErrorResponse(403, 'Already Verified'))
+            return next(new ErrorResponse(403, "Account locked"))
         } else {
             return next(new ErrorResponse(403, "Failure Authentication"))
         }
