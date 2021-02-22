@@ -4,6 +4,7 @@ const asyncMiddleware = require("../middleware/asyncMiddleware");
 const ErrorResponse = require("../model/ErrorResponse");
 const SuccessResponse = require("../model/SuccessResponse");
 
+// Add Role
 exports.createNewRole = asyncMiddleware(async(req, res, next) => {
     const { role_name, role_desc } = req.body;
     const newRole = new Role({ role_name, role_desc });
@@ -11,14 +12,16 @@ exports.createNewRole = asyncMiddleware(async(req, res, next) => {
     res.status(201).json(new SuccessResponse(201, role))
 });
 
+// All Role
 exports.getAllRoles = asyncMiddleware(async(req, res, next) => {
-    const roles = await Role.find();
+    const roles = await Role.find().select('-updatedAt -createdAt -__v');
     if (!roles.length) {
         return next(new ErrorResponse(404, 'No roles'));
     }
     res.status(200).json(new SuccessResponse(200, roles))
 });
 
+// Role Update
 exports.updateRole = asyncMiddleware(async(req, res, next) => {
     const { id } = req.params;
     if (!id.trim()) {
@@ -31,6 +34,7 @@ exports.updateRole = asyncMiddleware(async(req, res, next) => {
     res.status(200).json(new SuccessResponse(200, updatedRole))
 });
 
+// Role Delete
 exports.deleteRole = asyncMiddleware(async(req, res, next) => {
     const { id } = req.params;
     if (!id.trim()) {
@@ -40,5 +44,5 @@ exports.deleteRole = asyncMiddleware(async(req, res, next) => {
     if (!deleteRole) {
         return next(new ErrorResponse(400, 'Can not delete'))
     }
-    res.status(200).json(new SuccessResponse(200));
+    res.status(200).json(new SuccessResponse(200, 'Delete success'));
 })

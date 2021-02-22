@@ -12,13 +12,12 @@ router.get('/test', jwtAuth, authorize("admin"), (req, res) => {
     res.status(200).json({ success: true });
 })
 
+router.post("/add", jwtAuth, authorize("admin"), roleController.createNewRole);
 
-router.get("/all", roleController.getAllRoles);
+router.get("/all", jwtAuth, authorize("admin"), roleController.getAllRoles);
 
-router.post("/add", roleController.createNewRole);
+router.patch("/update/:id", jwtAuth, authorize("admin"), roleController.updateRole);
 
-router.patch("/update/:id", roleController.updateRole);
-
-router.delete("/delete/:id", roleController.deleteRole);
+router.delete("/delete/:id", jwtAuth, authorize("admin"), roleController.deleteRole);
 
 module.exports = router;
