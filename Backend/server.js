@@ -10,6 +10,8 @@ const router = express.Router();
 const auth = require('./routes/api/auth');
 const role = require('./routes/api/role');
 const product = require('./routes/api/product');
+const category = require('./routes/api/category');
+
 const errorMiddleware = require('./middleware/errorMiddleware');
 
 const { ConnectMongo } = require('./database/connectDB');
@@ -29,6 +31,7 @@ app.use('/api/v1/role', role);
 
 app.use('/api/v1/product', product);
 
+app.use('/api/v1/category', category);
 
 
 
