@@ -4,31 +4,39 @@ const { Schema } = mongoose;
 const ProductSchema = new Schema({
     name: {
         type: String,
-        required: [true, "name is required"],
+        required: [true, "Name is required"],
     },
     price: {
         type: Number,
-        required: [true, "price is required"],
+        required: [true, "Price is required"],
     },
     quantity: {
         type: Number,
-        required: [true, "quantity is required"],
+        required: [true, "Quantity is required"],
     },
     description: {
         type: String,
-        required: [true, "description is required"],
+        required: [true, "Description is required"],
     },
     image: {
         type: String,
     },
     category: {
         type: String,
-        required: [true, "category is required"],
+        required: [true, "Category is required"],
+    },
+    origin: {
+        type: String,
+        required: [true, "Origin is required"],
     },
     sku: {
         type: String,
-        required: [true, "sku is required"],
+        required: [true, "Sku is required"],
         unique: true,
+    },
+    isActive: {
+        type: Boolean,
+        default: true
     }
 }, {
     toJSON: { virtuals: true },

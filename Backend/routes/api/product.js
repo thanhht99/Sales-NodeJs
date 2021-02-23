@@ -9,15 +9,18 @@ router.get('/test', jwtAuth, authorize("admin"), (req, res) => {
     res.status(200).json({ success: true });
 })
 
+router.post('/add', jwtAuth, mongoUpload.single("image"), authorize("admin", "saler"), productController.createNewProduct)
+
+router.get('/all', jwtAuth, productController.getAllProducts)
+
+router.get('/:productSku', jwtAuth, authorize("admin", "saler"), productController.getProductBySku)
+
+router.patch("/update/:productSku", jwtAuth, authorize("admin", "saler"), productController.updateProduct);
+
+router.patch("/updateActiveFalse/:productSku", jwtAuth, authorize("admin", "saler"), productController.updateActiveFalseProduct);
+
+router.patch("/updateActiveTrue/:productSku", jwtAuth, authorize("admin", "saler"), productController.updateActiveTrueProduct);
 
 
-router
-    .route('/')
-    .get(jwtAuth, authorize("admin"), productController.getAllProducts)
-    .post(mongoUpload.single("image"), productController.createNewProduct);
 
-
-router.delete('/:productId', jwtAuth, authorize("admin"), productController.deleteProductById)
-
-router.get('/:productId', productController.getProductById)
 module.exports = router;
