@@ -11,6 +11,7 @@ const auth = require('./routes/api/auth');
 const role = require('./routes/api/role');
 const product = require('./routes/api/product');
 const category = require('./routes/api/category');
+const cart = require('./routes/api/cart');
 
 const errorMiddleware = require('./middleware/errorMiddleware');
 
@@ -32,6 +33,8 @@ app.use('/api/v1/role', role);
 app.use('/api/v1/product', product);
 
 app.use('/api/v1/category', category);
+
+app.use('/api/v1/cart', cart);
 
 
 

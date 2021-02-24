@@ -4,6 +4,9 @@ const ErrorResponse = require('../model/ErrorResponse');
 
 
 const jwtAuth = async(req, res, next) => {
+    if (!req.headers.authorization) {
+        return next(new ErrorResponse(401, "You are not authorized"))
+    }
     const token = req.headers.authorization.split(' ')[1];
     // console.log(token);
     if (!token) {
