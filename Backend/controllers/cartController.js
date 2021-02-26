@@ -38,18 +38,17 @@ exports.addItemToCart = asyncMiddleware(async(req, res, next) => {
                 } else {
                     cart.subTotal = cart.items.map(item => item.total).reduce((acc, next) => acc + next);
                 }
-                console.log("1")
             }
             //----------Check if product exist, just add the previous quantity with 
             //the new quantity and update the total price-------
-            else if (indexFound !== -1) {
+            else if (indexFound !== -1 && (cart.items[indexFound].quantity + quantity) <= productDetails.quantity) {
                 cart.items[indexFound].quantity = cart.items[indexFound].quantity + quantity;
                 cart.items[indexFound].total = cart.items[indexFound].quantity * productDetails.price;
                 cart.items[indexFound].price = productDetails.price
                 cart.subTotal = cart.items.map(item => item.total).reduce((acc, next) => acc + next);
             }
             //----Check if quantity is greater than 0 then add item to items array ----
-            else if (quantity > 0) {
+            else if (quantity > 0 && quantity <= productDetails.quantity && indexFound === -1) {
                 cart.items.push({
                     productId: productId,
                     quantity: quantity,
@@ -67,18 +66,22 @@ exports.addItemToCart = asyncMiddleware(async(req, res, next) => {
         }
         //------------ This creates a new cart and then adds the item to the cart that has been created------------
         else {
-            const cartData = {
-                items: [{
-                    productId: productId,
-                    quantity: quantity,
-                    total: parseInt(productDetails.price * quantity),
-                    price: productDetails.price
-                }],
-                subTotal: parseInt(productDetails.price * quantity)
+            if (quantity > 0 && quantity <= productDetails.quantity) {
+                const cartData = {
+                    items: [{
+                        productId: productId,
+                        quantity: quantity,
+                        total: parseInt(productDetails.price * quantity),
+                        price: productDetails.price
+                    }],
+                    subTotal: parseInt(productDetails.price * quantity)
+                }
+                cart = await cartRepository.addItem(cartData)
+                    // let data = await cart.save();
+                res.status(200).json(new SuccessResponse(200, cart));
+            } else {
+                return next(new ErrorResponse(400, "Invalid quantity"));
             }
-            cart = await cartRepository.addItem(cartData)
-                // let data = await cart.save();
-            res.status(200).json(new SuccessResponse(200, cart));
         }
     } catch (err) {
         return next(new ErrorResponse(400, err));
@@ -107,6 +110,87 @@ exports.emptyCart = asyncMiddleware(async(req, res, next) => {
         cart.subTotal = 0
         let data = await cart.save();
         res.status(200).json(new SuccessResponse(200, "Cart has been emptied"));
+    } catch (err) {
+        console.log(err)
+        return next(new ErrorResponse(400, "Something went wrong"));
+    }
+});
+
+// Subtract Product Quantity from Cart
+exports.subItemToCart = asyncMiddleware(async(req, res, next) => {
+    const {
+        productId
+    } = req.body;
+    const quantity = Number.parseInt(req.body.quantity);
+
+    try {
+        let cart = await cartRepository.cart();
+
+        const productDetails = await Product
+            .findById(productId)
+            .populate("category_detail");
+        if (!productDetails) {
+            return next(new ErrorResponse(404, "Product is not found"))
+        }
+
+        //--If cart exists ----
+        if (cart) {
+            //---- Check if index exists ----
+            const indexFound = cart.items.findIndex(item => item.productId.id == productId);
+            console.log(indexFound)
+
+            if (quantity > cart.items[indexFound].quantity || quantity <= 0) {
+                return next(new ErrorResponse(400, "Quantity illegal"));
+            } else if ((cart.items[indexFound].quantity - quantity) < 1) {
+                return next(new ErrorResponse(400, "Quantity product can not be less then 1."));
+            } else if (indexFound !== -1) {
+                cart.items[indexFound].quantity = cart.items[indexFound].quantity - quantity;
+                cart.items[indexFound].total = cart.items[indexFound].quantity * productDetails.price;
+                cart.items[indexFound].price = productDetails.price
+                cart.subTotal = cart.items.map(item => item.total).reduce((acc, next) => acc + next);
+            } else {
+                return next(new ErrorResponse(400, "Invalid request"));
+            }
+            cart.subTotal = cart.items.map(item => item.total).reduce((acc, next) => acc + next);
+            let data = await cart.save();
+            res.status(200).json(new SuccessResponse(200, data));
+        } else {
+            return next(new ErrorResponse(400, "Cart is empty"));
+        }
+    } catch (err) {
+        return next(new ErrorResponse(400, err));
+    }
+});
+
+// Remove Single Product From Cart
+exports.removeItemToCart = asyncMiddleware(async(req, res, next) => {
+    const {
+        productId
+    } = req.body;
+    try {
+        let cart = await cartRepository.cart();
+        const productDetails = await Product
+            .findById(productId)
+            .populate("category_detail");
+        if (!productDetails) {
+            return next(new ErrorResponse(404, "Product is not found"))
+        }
+        if (cart) {
+            //---- Check if index exists ----
+            const indexFound = cart.items.findIndex(item => item.productId.id == productId);
+            console.log(indexFound)
+            if (indexFound >= 0) {
+                cart.items.splice(indexFound, 1);
+                cart.subTotal = cart.items.map(item => item.total).reduce((acc, next) => acc + next);
+                let dataUpdate = await cart.save();
+                res.status(200).json(new SuccessResponse(200, dataUpdate));
+            } else {
+                return next(new ErrorResponse(400, "Invalid request"));
+            }
+
+        } else {
+            return next(new ErrorResponse(400, "Cart is empty"));
+        }
     } catch (err) {
         console.log(err)
         return next(new ErrorResponse(400, "Something went wrong"));
