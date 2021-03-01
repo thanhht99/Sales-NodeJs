@@ -12,3 +12,5 @@ router.get('/test', jwtAuth, (req, res) => {
 })
 
 router.post("/send", jwtAuth, chatController.send);
+
+module.exports = router;
