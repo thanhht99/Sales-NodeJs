@@ -20,6 +20,7 @@ const jwtAuth = async(req, res, next) => {
         if (user) {
             // tạo 1 property trong req
             req.user = payload;
+            process.env.emailSender = user.email;
             next();
         } else {
             return next(new ErrorResponse(401, "Unauthorized"))

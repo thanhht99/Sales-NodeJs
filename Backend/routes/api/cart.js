@@ -11,10 +11,14 @@ router.get('/test', jwtAuth, authorize("admin"), (req, res) => {
     res.status(200).json({ success: true });
 })
 
-router.post("/", jwtAuth, cartController.addItemToCart);
+router.post("/add", jwtAuth, cartController.addItemToCart);
+
+router.post("/sub", jwtAuth, cartController.subItemToCart);
 
 router.get("/", jwtAuth, cartController.getCart);
 
 router.delete("/emptyCart", cartController.emptyCart);
+
+router.post("/remove", jwtAuth, cartController.removeItemToCart);
 
 module.exports = router;
