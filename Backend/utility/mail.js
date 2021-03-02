@@ -1,7 +1,27 @@
 const nodemailer = require('nodemailer');
-const handlebars = require('handlebars');
-const fs = require('fs');
 
+class MailService{
+    transporter;
+    static init(){
+        this.transporter = nodemailer.createTransport({
+            service: "Gmail",
+            auth: {
+                user: process.env.USER_MAIL, 
+                pass: process.env.PASS_MAIL 
+            },
+        });
+    }
+    static async sendMail(from, to, subject, text, html){
+        const info = await this.transporter.sendMail({
+            from,
+            to,
+            subject,
+            text,
+            html,
+        });
+        return info;
+    }
+}
 
 // render = (filename, replacements) => {
 //     const source = fs.readFileSync(filename, 'utf8').toString();
@@ -117,3 +137,6 @@ exports.send = async(req, res, next) => {
         });
     });
 }
+
+
+module.exports = MailService;

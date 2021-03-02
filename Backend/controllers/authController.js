@@ -17,7 +17,7 @@ const {
 exports.register = asyncMiddleware(async(req, res, next) => {
     const { name, email, password } = req.body;
     const newUser = new User({ name, email, password });
-    var verify = Math.floor(Math.random() * 1000000);
+    const verify = Math.floor(Math.random() * 1000000);
     newUser.verifyCode = verify;
     const res_user = await newUser.save();
     if (res_user) {
