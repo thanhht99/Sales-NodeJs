@@ -56,7 +56,6 @@ app.get("/test", (req, res, next) => {
   res.status(200).json({ success: true });
 });
 
-// viet duoi phan route
 app.use(errorMiddleware);
 
 app.listen(PORT, () => {
