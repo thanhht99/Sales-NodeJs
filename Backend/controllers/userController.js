@@ -20,31 +20,53 @@ exports.resetPassword = asyncMiddleware(async (req, res, next) => {
 
   const token = crypto.randomBytes(30).toString("hex");
 
-  //   console.log(token);
-
   const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 
-  const newToken = new Token({
-    userId: user._id,
-    email,
-    token: hashedToken,
-    expired: Date.now() + 1000 * 60,
-  });
+  const newToken = await Token.findOneAndUpdate(
+    { email },
+    {
+      email,
+      token: hashedToken,
+      expired: Date.now() + 1000 * 60 * process.env.RESETTOKEN_EXPIRED,
+      userId: user._id,
+    },
+    { upsert: true, new: true }
+  );
 
-  await newToken.save();
-  
-  const info = await MailService.sendMail(
+  await MailService.sendMail(
     `Best Seller VN <${process.env.USER_MAIL}>`,
     email,
     "Reset Password",
-    "reset password token",
     `<a href='http://localhost:3000/api/v1/user/resetpassword/${token}'>http://localhost:3000/api/v1/user/resetpassword/${token}</a>`
   );
 
   res
     .status(200)
     .json(new SuccessResponse(200, `Please check your email - ${email}`));
+});
 
-  console.log("HashedToken", hashedToken);
-  console.log(info.messageId);
+// UpdatePassword
+exports.updatePassword = asyncMiddleware(async (req, res, next) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+  //check token  in db
+  const dbToken = await Token.findOne({
+    token: hashedToken,
+    expired: { $gt: Date.now() },
+  });
+  if (!dbToken) {
+    return next(new ErrorResponse(400, "Invalid Token"));
+  }
+
+  const user = await User.findById(dbToken.userId);
+  if (!user) {
+    return next(new ErrorResponse(404, "User is not found"));
+  }
+  user.password = password;
+  await user.save();
+
+  res.status(200).json(new SuccessResponse(200, "Your password is updated"));
 });
