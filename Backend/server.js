@@ -25,7 +25,6 @@ ConnectMongo.getConnect();
 MailService.init();
 // middleware parse body
 app.use(express.json());
-
 // routes
 app.use("/api/v1/auth", auth);
 
@@ -40,17 +39,6 @@ app.use("/api/v1/category", category);
 app.use("/api/v1/cart", cart);
 
 app.use("/api/v1/chat", chat);
-
-app.post("/mail", async () => {
-  const info = await MailService.sendMail(
-    "thay dep trai <anhruemngu123@gmail.com>",
-    "hoangtienthanh1999@gmail.com",
-    "Hello",
-    "Hello world!",
-    "<b> Hello world?</b>"
-  );
-  console.log(info.messageId);
-});
 
 app.get("/test", (req, res, next) => {
   res.status(200).json({ success: true });

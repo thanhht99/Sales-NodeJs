@@ -9,10 +9,6 @@ router.post("/register", baseAuth, authController.register);
 
 router.post("/register/verify", baseAuth, authController.verify);
 
-router.post("/forgotPassword", baseAuth, authController.forgotPassword);
-
-router.post("/forgotPassword/verify", baseAuth, authController.forgotPasswordVerify);
-
 router.post("/login", baseAuth, authController.login);
 
 router.patch("/update", jwtAuth, authController.updatePasswordUser);

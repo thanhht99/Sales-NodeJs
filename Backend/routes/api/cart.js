@@ -13,12 +13,12 @@ router.get('/test', jwtAuth, authorize("admin"), (req, res) => {
 
 router.post("/add", jwtAuth, cartController.addItemToCart);
 
-router.post("/sub", jwtAuth, cartController.subItemToCart);
+router.post("/sub", jwtAuth, cartController.subItemFromCart);
 
 router.get("/", jwtAuth, cartController.getCart);
 
-router.delete("/emptyCart", cartController.emptyCart);
+router.delete("/emptyCart",jwtAuth, cartController.emptyCart);
 
-router.post("/remove", jwtAuth, cartController.removeItemToCart);
+router.post("/remove", jwtAuth, cartController.removeItemFromCart);
 
 module.exports = router;

@@ -4,18 +4,20 @@ const { Schema } = mongoose;
 
 const OrderSchema = new Schema(
   {
-    user: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
     products: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Product",
       },
     ],
+    orderDate: {
+      type: Date,
+      default: Date.now(),
+    },
     deliveryAddress: {
       type: String,
       required: [true, "Delivery Address is required"],
