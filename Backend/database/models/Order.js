@@ -4,14 +4,33 @@ const { Schema } = mongoose;
 
 const OrderSchema = new Schema(
   {
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
+    userEmail: {
+      type: mongoose.Schema.Types.String,
       ref: "User",
+    },
+    phone: {
+      type: String,
+      required: [true, "Phone is required"],
     },
     products: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Product",
+        productId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Product",
+        },
+        quantity: {
+          type: Number,
+          required: true,
+          min: [1, "Quantity can not be less then 1."],
+        },
+        price: {
+          type: Number,
+          required: [true, "Price is required"],
+        },
+        total: {
+          type: Number,
+          required: [true, "Total is required"],
+        },
       },
     ],
     orderDate: {
@@ -22,29 +41,33 @@ const OrderSchema = new Schema(
       type: String,
       required: [true, "Delivery Address is required"],
     },
-    fromOfDelivery: {
-      type: String,
-      required: [true, "From Of Delivery is required"],
+    intendedArrivalDate: {
+      type: Date,
+      default: Date.now(),
     },
     payments: {
       type: String,
       required: [true, "Payments is required"],
     },
     provisional: {
-      type: String,
+      type: Number,
       required: [true, "Provisional is required"],
     },
     transportFee: {
       type: Number,
       required: [true, "Transport fee is required"],
     },
-    subTotal: {
+    totalProduct: {
+      default: 0,
       type: Number,
-      required: [true, "Sub Total is required"],
+    },
+    subTotal: {
+      default: 0,
+      type: Number,
     },
     isActive: {
       type: Boolean,
-      default: false,
+      default: true,
     },
   },
   {

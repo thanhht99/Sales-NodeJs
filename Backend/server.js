@@ -13,6 +13,7 @@ const product = require("./routes/api/product");
 const category = require("./routes/api/category");
 const cart = require("./routes/api/cart");
 const chat = require("./routes/api/chat");
+const pay = require("./routes/api/pay");
 
 const errorMiddleware = require("./middleware/errorMiddleware");
 
@@ -39,6 +40,8 @@ app.use("/api/v1/category", category);
 app.use("/api/v1/cart", cart);
 
 app.use("/api/v1/chat", chat);
+
+app.use("/api/v1/pay", pay);
 
 app.get("/test", (req, res, next) => {
   res.status(200).json({ success: true });

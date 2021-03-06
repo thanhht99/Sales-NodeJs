@@ -108,7 +108,7 @@ exports.emptyCart = asyncMiddleware(async (req, res, next) => {
     cart.products = [];
     cart.subTotal = 0;
     cart.totalProduct = 0;
-    let data = await cart.save();
+    const data = await cart.save();
     res.status(200).json(new SuccessResponse(200, "Cart has been emptied"));
   } catch (err) {
     console.log(err);
