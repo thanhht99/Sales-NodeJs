@@ -4,6 +4,7 @@ const asyncMiddleware = require("../middleware/asyncMiddleware");
 const Cart = require("../database/models/Cart");
 const Product = require("../database/models/Product");
 const Order = require("../database/models/Order");
+const Bill = require("../database/models/Bill");
 
 // All Order
 exports.allOrder = asyncMiddleware(async (req, res, next) => {
@@ -56,8 +57,50 @@ exports.changeOrderStatus = asyncMiddleware(async (req, res, next) => {
     { new: true }
   );
   if (updatedOrderStatus) {
-    res.status(201).json(new SuccessResponse(201, updatedOrderStatus));
+    res.status(200).json(new SuccessResponse(200, updatedOrderStatus));
   }
 });
 
 // Export Bill
+exports.exportBill = asyncMiddleware(async (req, res, next) => {
+  const { id } = req.params;
+  const userEmail = req.user.email;
+  if (!id.trim()) {
+    return next(new ErrorResponse(400, "Id is empty"));
+  }
+  const order = await Order.findOne({ _id: id }).select(
+    "-updatedAt -createdAt -__v"
+  );
+  // console.log(order);
+  if (!order) {
+    return next(new ErrorResponse(404, "No order"));
+  }
+  if (order.isBill) {
+    return next(new ErrorResponse(403, "Bill already"));
+  }
+  const newBill = new Bill({ userEmail });
+  newBill.orderId = order._id;
+  newBill.phone = order.phone;
+  newBill.products = order.products;
+  newBill.deliveryAddress = order.deliveryAddress;
+  newBill.orderDate = order.orderDate;
+  newBill.intendedArrivalDate = order.intendedArrivalDate;
+  newBill.payments = order.payments;
+  newBill.provisional = order.provisional;
+  newBill.transportFee = order.transportFee;
+  newBill.billIssuer = userEmail;
+  newBill.totalProduct = order.totalProduct;
+  newBill.subTotal = order.subTotal;
+
+  const res_bill = await newBill.save();
+
+  if (res_bill) {
+    const updatedOrder = await Order.findOneAndUpdate(
+      { _id: order._id },
+      { isBill: true },
+      { new: true }
+    );
+    console.log(updatedOrder);
+    res.status(201).json(new SuccessResponse(201, res_bill));
+  }
+});

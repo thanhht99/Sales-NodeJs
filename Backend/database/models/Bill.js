@@ -4,6 +4,10 @@ const { Schema } = mongoose;
 
 const BillSchema = new Schema(
   {
+    orderId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Order",
+    },
     userEmail: {
       type: mongoose.Schema.Types.String,
       ref: "User",
@@ -41,6 +45,10 @@ const BillSchema = new Schema(
       type: String,
       required: [true, "Delivery Address is required"],
     },
+    orderDate: {
+      type: Date,
+      default: Date.now(),
+    },
     intendedArrivalDate: {
       type: Date,
       default: Date.now(),
@@ -57,6 +65,10 @@ const BillSchema = new Schema(
       type: Number,
       required: [true, "Transport fee is required"],
     },
+    billIssuer: {
+      type: String,
+      required: [true, "Bill Issuer fee is required"],
+    },
     totalProduct: {
       default: 0,
       type: Number,
@@ -67,10 +79,7 @@ const BillSchema = new Schema(
     },
     billStatus: {
       type: String,
-      enum: [
-        "Printed",
-        "Not printed yet"
-      ],
+      enum: ["Printed", "Not printed yet"],
       default: "Printed",
     },
     isActive: {

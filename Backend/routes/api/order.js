@@ -22,4 +22,11 @@ router.post(
   orderController.changeOrderStatus
 );
 
+router.post(
+  "/exportBill/:id",
+  jwtAuth,
+  authorize("admin", "saler"),
+  orderController.exportBill
+);
+
 module.exports = router;
