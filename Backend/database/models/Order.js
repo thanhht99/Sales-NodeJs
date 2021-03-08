@@ -65,6 +65,25 @@ const OrderSchema = new Schema(
       default: 0,
       type: Number,
     },
+    orderStatus: {
+      type: String,
+      enum: [
+        "Waiting for approval",
+        "Loading",
+        "The goods have been taken",
+        "Delivering",
+        "Successful delivery",
+      ],
+      default: "Waiting for approval",
+    },
+    isBill: {
+      type: Boolean,
+      default: false,
+    },
+    isEvaluate: {
+      type: Boolean,
+      default: false,
+    },
     isActive: {
       type: Boolean,
       default: true,

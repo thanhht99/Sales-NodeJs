@@ -32,6 +32,17 @@ exports.pay = asyncMiddleware(async (req, res, next) => {
     const link = process.env.linkPayment;
 
     if (payments === "Momo") {
+      for (let i = 0; i < newOrder.products.length; i++) {
+        const product = await Product.findOne({
+          _id: newOrder.products[i].productId,
+        });
+        if (product) {
+          if (product.quantity >= newOrder.products[i].quantity) {
+          } else {
+            return next(new ErrorResponse(400, `Quantity don't enough. Please check ${product.name}`));
+          }
+        }
+      }
       if (newOrder.totalProduct > 0) {
         //   console.log(newOrder);
         const res_order = await newOrder.save();
@@ -41,9 +52,13 @@ exports.pay = asyncMiddleware(async (req, res, next) => {
               _id: newOrder.products[i].productId,
             });
             if (product) {
-              product.quantity =
-                product.quantity - newOrder.products[i].quantity;
-              await product.save();
+              if (product.quantity >= newOrder.products[i].quantity) {
+                product.quantity =
+                  product.quantity - newOrder.products[i].quantity;
+                await product.save();
+              } else {
+                return next(new ErrorResponse(400, "Quantity don't enough"));
+              }
             }
           }
           cart.products = [];
