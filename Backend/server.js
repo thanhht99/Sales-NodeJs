@@ -15,6 +15,7 @@ const cart = require("./routes/api/cart");
 const chat = require("./routes/api/chat");
 const pay = require("./routes/api/pay");
 const order = require("./routes/api/order");
+const feedback = require("./routes/api/feedback");
 
 const errorMiddleware = require("./middleware/errorMiddleware");
 
@@ -46,12 +47,14 @@ app.use("/api/v1/pay", pay);
 
 app.use("/api/v1/order", order);
 
+app.use("/api/v1/feedback", feedback);
+
 app.get("/test", (req, res, next) => {
-  res.status(200).json({ success: true });
+    res.status(200).json({ success: true });
 });
 
 app.use(errorMiddleware);
 
 app.listen(PORT, () => {
-  console.log(`Example app listening at http://localhost:${PORT}`.red);
+    console.log(`Example app listening at http://localhost:${PORT}`.red);
 });

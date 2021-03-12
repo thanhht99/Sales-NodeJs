@@ -2,96 +2,95 @@ const mongoose = require("mongoose");
 const express = require("express");
 const { Schema } = mongoose;
 
-const OrderSchema = new Schema(
-  {
+const OrderSchema = new Schema({
     userEmail: {
-      type: mongoose.Schema.Types.String,
-      ref: "User",
+        type: mongoose.Schema.Types.String,
+        ref: "User",
     },
     phone: {
-      type: String,
-      required: [true, "Phone is required"],
+        type: String,
+        required: [true, "Phone is required"],
     },
-    products: [
-      {
+    products: [{
         productId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Product",
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Product",
         },
         quantity: {
-          type: Number,
-          required: true,
-          min: [1, "Quantity can not be less then 1."],
+            type: Number,
+            required: true,
+            min: [1, "Quantity can not be less then 1."],
         },
         price: {
-          type: Number,
-          required: [true, "Price is required"],
+            type: Number,
+            required: [true, "Price is required"],
         },
         total: {
-          type: Number,
-          required: [true, "Total is required"],
+            type: Number,
+            required: [true, "Total is required"],
         },
-      },
-    ],
+    }, ],
     orderDate: {
-      type: Date,
-      default: Date.now(),
+        type: Date,
+        default: Date.now(),
     },
     deliveryAddress: {
-      type: String,
-      required: [true, "Delivery Address is required"],
+        type: String,
+        required: [true, "Delivery Address is required"],
     },
     intendedArrivalDate: {
-      type: Date,
-      default: Date.now(),
+        type: Date,
+        default: Date.now(),
     },
     payments: {
-      type: String,
-      required: [true, "Payments is required"],
+        type: String,
+        required: [true, "Payments is required"],
     },
     provisional: {
-      type: Number,
-      required: [true, "Provisional is required"],
+        type: Number,
+        required: [true, "Provisional is required"],
     },
     transportFee: {
-      type: Number,
-      required: [true, "Transport fee is required"],
+        type: Number,
+        required: [true, "Transport fee is required"],
     },
     totalProduct: {
-      default: 0,
-      type: Number,
+        default: 0,
+        type: Number,
     },
     subTotal: {
-      default: 0,
-      type: Number,
+        default: 0,
+        type: Number,
     },
     orderStatus: {
-      type: String,
-      enum: [
-        "Waiting for approval",
-        "Loading",
-        "The goods have been taken",
-        "Delivering",
-        "Successful delivery",
-      ],
-      default: "Waiting for approval",
+        type: String,
+        enum: [
+            "Waiting for approval",
+            "Loading",
+            "The goods have been taken",
+            "Delivering",
+            "Successful delivery",
+        ],
+        default: "Waiting for approval",
     },
     isBill: {
-      type: Boolean,
-      default: false,
+        type: Boolean,
+        default: false,
+    },
+    isFeedback: {
+        type: Boolean,
+        default: false,
     },
     isEvaluate: {
-      type: Boolean,
-      default: false,
+        type: Boolean,
+        default: false,
     },
     isActive: {
-      type: Boolean,
-      default: true,
+        type: Boolean,
+        default: true,
     },
-  },
-  {
+}, {
     timestamps: true,
-  }
-);
+});
 
 module.exports = mongoose.model("Order", OrderSchema);
