@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken');
 const User = require('../database/models/User');
 const ErrorResponse = require('../model/ErrorResponse');
 
-
 const jwtAuth = async(req, res, next) => {
     if (!req.headers.authorization) {
         return next(new ErrorResponse(401, "You are not authorized"))

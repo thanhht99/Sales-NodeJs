@@ -29,6 +29,10 @@ const OrderSchema = new Schema({
             type: Number,
             required: [true, "Total is required"],
         },
+        isRating: {
+            type: Boolean,
+            default: false,
+        },
     }, ],
     orderDate: {
         type: Date,
@@ -78,10 +82,6 @@ const OrderSchema = new Schema({
         default: false,
     },
     isFeedback: {
-        type: Boolean,
-        default: false,
-    },
-    isEvaluate: {
         type: Boolean,
         default: false,
     },

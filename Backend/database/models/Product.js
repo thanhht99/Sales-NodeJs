@@ -34,6 +34,14 @@ const ProductSchema = new Schema({
         required: [true, "Sku is required"],
         unique: true,
     },
+    rating: {
+        type: Number,
+        default: 0,
+    },
+    timesRating: {
+        type: Number,
+        default: 0,
+    },
     isActive: {
         type: Boolean,
         default: true
