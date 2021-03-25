@@ -3,12 +3,12 @@ const express = require('express')
 const { Schema } = mongoose;
 
 const PromotionSchema = new Schema({
-    products: [{
+    productId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Product",
-    }],
+    },
     discount: {
-        type: mongoose.Schema.Types.Decimal128,
+        type: Number,
         required: [true, "Discount is required"],
     },
     isActive: {

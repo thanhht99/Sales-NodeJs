@@ -17,6 +17,7 @@ const pay = require("./routes/api/pay");
 const order = require("./routes/api/order");
 const feedback = require("./routes/api/feedback");
 const rating = require("./routes/api/rating");
+const promotion = require("./routes/api/promotion");
 
 const errorMiddleware = require("./middleware/errorMiddleware");
 
@@ -51,6 +52,8 @@ app.use("/api/v1/order", order);
 app.use("/api/v1/feedback", feedback);
 
 app.use("/api/v1/rating", rating);
+
+app.use("/api/v1/promotion", promotion);
 
 app.get("/test", (req, res, next) => {
     res.status(200).json({ success: true });

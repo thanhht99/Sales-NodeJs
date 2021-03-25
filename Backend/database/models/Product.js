@@ -42,6 +42,10 @@ const ProductSchema = new Schema({
         type: Number,
         default: 0,
     },
+    isPromotion: {
+        type: Boolean,
+        default: false,
+    },
     isActive: {
         type: Boolean,
         default: true
