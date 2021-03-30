@@ -17,7 +17,7 @@ router.get("/all", jwtAuth, authorize("admin"), promotionController.getAllPromot
 
 router.patch("/update/:productId", jwtAuth, authorize("admin"), promotionController.updatePromotion);
 
-// router.delete("/delete/:id", jwtAuth, authorize("admin"), promotionController.deleteRole);
+router.patch("/update/active/:productId", jwtAuth, authorize("admin"), promotionController.updateActivePromotion);
 
 
 module.exports = router;

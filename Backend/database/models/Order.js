@@ -25,6 +25,10 @@ const OrderSchema = new Schema({
             type: Number,
             required: [true, "Price is required"],
         },
+        promotion: {
+            type: Number,
+            required: [true, "Promotion is required"],
+        },
         total: {
             type: Number,
             required: [true, "Total is required"],

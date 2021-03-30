@@ -20,11 +20,15 @@ exports.createNewPromotion = asyncMiddleware(async(req, res, next) => {
         productId: productId,
     });
     if (checkPromotion) {
-        return next(new ErrorResponse(404, "The product has a promotion"));
+        return next(new ErrorResponse(404, "The product has a discount"));
     }
     const newPromotion = new Promotion({ productId, discount });
     const promotion = await newPromotion.save();
-    res.status(201).json(new SuccessResponse(201, promotion))
+    if (promotion) {
+        res.status(201).json(new SuccessResponse(201, promotion))
+        await Product.findOneAndUpdate({ _id: productId }, { isPromotion: true }, { new: true });
+    }
+    return next(new ErrorResponse(404, "Not create new discount"));
 });
 
 // All Promotions
@@ -45,9 +49,30 @@ exports.updatePromotion = asyncMiddleware(async(req, res, next) => {
     }
     const checkPromotion = await Promotion.findOne({ productId });
     if (!checkPromotion) {
-        return next(new ErrorResponse(404, "The product hasn't promotion"));
+        return next(new ErrorResponse(404, "The product hasn't discount"));
+    }
+    if (!checkPromotion.isActive) {
+        return next(new ErrorResponse(404, "The product discount is not active"));
     }
     const updatedPromotion = await Promotion.findOneAndUpdate({ productId }, { discount }, { new: true });
+    if (!updatedPromotion) {
+        return next(new ErrorResponse(400, 'Can not updated'))
+    }
+    res.status(200).json(new SuccessResponse(200, updatedPromotion))
+});
+
+// Promotion Update Active
+exports.updateActivePromotion = asyncMiddleware(async(req, res, next) => {
+    const { isActive } = req.body;
+    const { productId } = req.params;
+    if (!productId.trim()) {
+        return next(new ErrorResponse(400, "Product Id is empty"));
+    }
+    const checkPromotion = await Promotion.findOne({ productId });
+    if (!checkPromotion) {
+        return next(new ErrorResponse(404, "The product hasn't discount"));
+    }
+    const updatedPromotion = await Promotion.findOneAndUpdate({ productId }, { isActive }, { new: true });
     if (!updatedPromotion) {
         return next(new ErrorResponse(400, 'Can not updated'))
     }

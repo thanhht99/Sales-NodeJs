@@ -13,6 +13,7 @@ const PromotionSchema = new Schema({
     },
     isActive: {
         type: Boolean,
+        required: [true, "Active is required"],
         default: true
     }
 }, {
